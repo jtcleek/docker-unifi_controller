@@ -1,0 +1,36 @@
+---
+version: "3.8"
+services:
+  unifi-controller:
+    image: lscr.io/linuxserver/unifi-controller:latest
+    container_name: unifi-controller
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=America/Chicago
+      - MEM_LIMIT=1024 #optional
+      - MEM_STARTUP=1024 #optional
+    volumes:
+      - unifi_data:/config
+    ports:
+      # Unifi web admin port
+      - 8443:8443
+      # Unifi STUN port
+      - 3478:3478/udp
+      # Required for AP discovery
+      - 10001:10001/udp
+      # Required for device communication
+      - 8080:8080
+      # Optional: Make controller discoverable on L2 network option
+      - 1900:1900/udp
+      # Optional: Enable mobile throughput test
+      - 6789:6789
+    restart: unless-stopped
+volumes:
+  unifi_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /opt/docker/unifi_data
+...
